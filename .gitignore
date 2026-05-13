@@ -3,3 +3,4 @@ Debug/
 *.d
 *.su
 *.cyclo
+.claude/CLAUDE.md
