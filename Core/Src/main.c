@@ -97,8 +97,20 @@ static void OLED_ShowJoystickState(uint16_t xValue,
                                    uint8_t keyPressed,
                                    KY023_DirectionTypeDef direction)
 {
-  OLED_ShowNum(1, 3, xValue, 4);
-  OLED_ShowNum(1, 10, yValue, 4);
+  /* 将 ADC 值转换为电压显示（保留2位小数） */
+  /* 电压 = ADC值 * 3.3 / 4095，放大100倍后取整 */
+  uint16_t voltageX = (uint16_t)((uint32_t)xValue * 330 / 4095);
+  uint16_t voltageY = (uint16_t)((uint32_t)yValue * 330 / 4095);
+
+  /* 显示 X 轴电压：格式 "X.XX" */
+  OLED_ShowNum(1, 3, voltageX / 100, 1);
+  OLED_ShowString(1, 4, ".");
+  OLED_ShowNum(1, 5, voltageX % 100, 2);
+
+  /* 显示 Y 轴电压：格式 "X.XX" */
+  OLED_ShowNum(1, 11, voltageY / 100, 1);
+  OLED_ShowString(1, 12, ".");
+  OLED_ShowNum(1, 13, voltageY % 100, 2);
 
   if (keyPressed != 0U)
   {
@@ -162,9 +174,11 @@ int main(void)
   OLED_Init();
   OLED_Clear();
   OLED_ShowString(1, 1, "X:");
-  OLED_ShowString(1, 8, "Y:");
+  OLED_ShowString(1, 9, "Y:");
   OLED_ShowString(2, 1, "SW:");
   OLED_ShowString(3, 1, "DIR:");
+  OLED_ShowString(1, 7, "V ");
+  OLED_ShowString(1, 15, "V");
 
   while (1)
   {
